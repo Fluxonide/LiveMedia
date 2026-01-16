@@ -98,9 +98,9 @@ fun providePillText(
 }
 
 private fun provideScrollableText(title: String, elapsedTimeMs: Long): String {
-    val speedMs = 500 // Scroll every 500ms
-    val waitAtStartSteps = 2 // Pause for 1s (2 * 500ms) at the beginning
-    val waitAtEndSteps = 2 // Pause for 1s (2 * 500ms) at the end
+    val speedMs = 200 // Scroll every 200ms
+    val waitAtStartSteps = 5 // Pause for 1s (5 * 200ms) at the beginning
+    val waitAtEndSteps = 5 // Pause for 1s (5 * 200ms) at the end
 
     val boundary = BreakIterator.getCharacterInstance()
     boundary.setText(title)

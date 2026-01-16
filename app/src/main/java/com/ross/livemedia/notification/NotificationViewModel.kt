@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.AndroidViewModel
 
 
-private const val SCROLL_UPDATE_DELAY_MS = 500L
+private const val SCROLL_UPDATE_DELAY_MS = 200L
 private const val STATIC_UPDATE_DELAY_MS = 1000L
 private const val CHANNEL_ID = "MediaLiveUpdateChannel"
 
