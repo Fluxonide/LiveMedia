@@ -4,6 +4,7 @@ import com.ross.livemedia.media.MusicState
 import com.ross.livemedia.media.MusicState.Companion.EMPTY_ALBUM
 import com.ross.livemedia.media.MusicState.Companion.EMPTY_ARTIST
 import com.ross.livemedia.storage.PillContent
+import java.text.BreakIterator
 import java.util.Locale
 
 private const val MAX_LENGTH = 70
@@ -97,21 +98,36 @@ fun providePillText(
 }
 
 private fun provideScrollableText(title: String, elapsedTimeMs: Long): String {
-    val speedMs = 500 // Scroll every 300ms
-    val waitAtStartSteps = 2 // Pause for 1.2s (4 * 300ms) at the beginning
-    val waitAtEndSteps = 2 // Pause for 900ms (3 * 300ms) at the end
-    
-    val scrollRange = title.length - 7
+    val speedMs = 500 // Scroll every 500ms
+    val waitAtStartSteps = 2 // Pause for 1s (2 * 500ms) at the beginning
+    val waitAtEndSteps = 2 // Pause for 1s (2 * 500ms) at the end
+
+    val boundary = BreakIterator.getCharacterInstance()
+    boundary.setText(title)
+
+    val graphemes = mutableListOf<String>()
+    var start = boundary.first()
+    var end = boundary.next()
+    while (end != BreakIterator.DONE) {
+        graphemes.add(title.substring(start, end))
+        start = end
+        end = boundary.next()
+    }
+
+    val visibleGraphemeCount = 7
+    if (graphemes.size <= visibleGraphemeCount) return title
+
+    val scrollRange = graphemes.size - visibleGraphemeCount
     val cycleSteps = waitAtStartSteps + scrollRange + waitAtEndSteps
-    
+
     val totalSteps = elapsedTimeMs / speedMs
     val stepInCycle = (totalSteps % cycleSteps).toInt()
-    
+
     val offset = when {
         stepInCycle < waitAtStartSteps -> 0
         stepInCycle < waitAtStartSteps + scrollRange -> stepInCycle - waitAtStartSteps
         else -> scrollRange
     }
-    
-    return title.substring(offset, offset + 7)
+
+    return graphemes.subList(offset, offset + visibleGraphemeCount).joinToString("")
 }
